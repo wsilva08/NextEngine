@@ -170,9 +170,11 @@ section[id] {
   color: var(--text-dark);
   font-weight: 600;
   position: relative;
+  display: block;
+  padding: 5px 0;
 }
 
-.nav-links a::after {
+.nav-links > li > a::after {
   content: '';
   position: absolute;
   bottom: -5px;
@@ -183,9 +185,51 @@ section[id] {
   transition: width 0.3s;
 }
 
-.nav-links a:hover::after {
+.nav-links > li > a:hover::after {
   width: 100%;
 }
+
+/* Dropdown Menu */
+.nav-item-dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--white);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    list-style: none;
+    padding: 0.5rem 0;
+    min-width: 220px;
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+}
+
+.nav-item-dropdown:hover .dropdown-menu {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-menu li a {
+    padding: 0.75rem 1.5rem;
+    white-space: nowrap;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.dropdown-menu li a:hover {
+    background-color: var(--light-gray);
+    color: var(--primary-blue);
+}
+
 
 .nav-actions {
   display: flex;
@@ -236,11 +280,11 @@ section[id] {
 }
 
 /* Services Section */
-.services, .why-us, .expertise {
+.services, .why-us, .expertise, .cases {
   padding: 80px 0;
 }
 
-.services {
+.services, .expertise, .cases {
     background-color: #f9fafb;
 }
 
@@ -332,7 +376,7 @@ section[id] {
 
 /* Expertise Section */
 .expertise {
-    background-color: #f9fafb;
+    background-color: var(--white);
 }
 
 .expertise-grid {
@@ -363,6 +407,51 @@ section[id] {
     margin-bottom: 0.5rem;
 }
 
+/* Cases Section */
+.cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.case-card {
+    background-color: var(--white);
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid #e5e7eb;
+}
+
+.case-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
+    border-color: var(--primary-blue);
+}
+
+.case-icon {
+    color: var(--primary-blue);
+    background-color: #e0e7ff;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.case-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+.case-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+}
+
+
 /* Footer */
 .footer {
     background-color: var(--dark-bg);
@@ -380,10 +469,19 @@ section[id] {
 .footer-about .logo {
     color: var(--white);
     margin-bottom: 1rem;
-    display: block;
+    display: inline-flex; /* Changed to align text */
+    text-decoration: none; /* Add this */
+    font-size: 1.5rem;
+    font-weight: 700;
 }
 
 .footer .logo svg {
+    color: inherit;
+}
+.footer .logo .logo-text {
+     background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
     color: inherit;
 }
 
@@ -660,6 +758,7 @@ section[id] {
     .footer-about {
         grid-column: 1 / -1;
         text-align: center;
+        justify-content: center; /* Center logo */
     }
     .footer-socials {
         justify-content: center;
@@ -685,5 +784,8 @@ section[id] {
     }
     #legal-modal {
         max-width: 90vw;
+    }
+    .cases-grid {
+        grid-template-columns: 1fr;
     }
 }
