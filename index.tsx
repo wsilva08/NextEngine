@@ -5,15 +5,15 @@
  */
 
 // Handle header style change on scroll
-// FIX: Cast to HTMLElement to access the style property, which is not available on the base Element type.
 const header = document.querySelector<HTMLElement>('.header');
 window.addEventListener('scroll', () => {
-    // FIX: Add null check to prevent runtime errors if the header element is not found.
     if (header) {
         if (window.scrollY > 50) {
             header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            header.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
         } else {
             header.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+            header.style.boxShadow = 'none';
         }
     }
 });
@@ -22,7 +22,6 @@ window.addEventListener('scroll', () => {
 const backToTopButton = document.querySelector('.back-to-top');
 
 window.addEventListener('scroll', () => {
-    // FIX: Add null check to prevent runtime errors if the button element is not found.
     if (backToTopButton) {
         if (window.scrollY > 300) {
             backToTopButton.classList.add('show');
@@ -32,11 +31,201 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// FIX: Use optional chaining to safely add event listener and prevent runtime errors if the button is not found.
 backToTopButton?.addEventListener('click', (e) => {
     e.preventDefault();
     window.scrollTo({
         top: 0,
         behavior: 'smooth'
+    });
+});
+
+// --- Modal Handling ---
+
+const modalTriggers = document.querySelectorAll<HTMLAnchorElement>('[data-modal-trigger]');
+
+// --- Legal Modal Logic ---
+
+const legalModalOverlay = document.getElementById('legal-modal-overlay');
+const legalModalTitle = document.getElementById('modal-title');
+const legalModalContent = document.getElementById('modal-content');
+const legalModalCloseBtn = document.querySelector('#legal-modal .modal-close-btn');
+
+const legalContent = {
+    privacy: {
+        title: 'Política de Privacidade',
+        content: `
+            <p>A sua privacidade é importante para nós. É política do Next Evolution respeitar a sua privacidade em relação a qualquer informação sua que possamos coletar no site Next Evolution, e outros sites que possuímos e operamos.</p>
+            <h4>1. Coleta de Informações</h4>
+            <p>Solicitamos informações pessoais apenas quando realmente precisamos delas para lhe fornecer um serviço. Fazemo-lo por meios justos e legais, com o seu conhecimento e consentimento. Também informamos por que estamos coletando e como será usado.</p>
+            <h4>2. Uso de Informações</h4>
+            <p>Apenas retemos as informações coletadas pelo tempo necessário para fornecer o serviço solicitado. Quando armazenamos dados, protegemos dentro de meios comercialmente aceitáveis para evitar perdas e roubos, bem como acesso, divulgação, cópia, uso ou modificação não autorizados.</p>
+            <h4>3. Divulgação a Terceiros</h4>
+            <p>Não compartilhamos informações de identificação pessoal publicamente ou com terceiros, exceto quando exigido por lei.</p>`
+    },
+    terms: {
+        title: 'Termos de Uso',
+        content: `
+            <h4>1. Aceitação dos Termos</h4>
+            <p>Ao acessar o site Next Evolution, concorda em cumprir estes termos de serviço, todas as leis e regulamentos aplicáveis e concorda que é responsável pelo cumprimento de todas as leis locais aplicáveis.</p>
+            <h4>2. Uso de Licença</h4>
+            <p>É concedida permissão para baixar temporariamente uma cópia dos materiais (informações ou software) no site Next Evolution, apenas para visualização transitória pessoal e não comercial. Esta é a concessão de uma licença, não uma transferência de título.</p>
+            <h4>3. Limitações</h4>
+            <p>Em nenhum caso o Next Evolution ou seus fornecedores serão responsáveis por quaisquer danos (incluindo, sem limitação, danos por perda de dados ou lucro ou devido a interrupção dos negócios) decorrentes do uso ou da incapacidade de usar os materiais em Next Evolution.</p>`
+    },
+    cookies: {
+        title: 'Política de Cookies',
+        content: `
+            <h4>O que são cookies?</h4>
+            <p>Como é prática comum em quase todos os sites profissionais, este site usa cookies, que são pequenos arquivos baixados no seu computador, para melhorar sua experiência. Esta página descreve quais informações eles coletam, como as usamos e por que às vezes precisamos armazenar esses cookies.</p>
+            <h4>Como usamos cookies?</h4>
+            <p>Utilizamos cookies por vários motivos, detalhados abaixo. Infelizmente, na maioria dos casos, não existem opções padrão do setor para desativar os cookies sem desativar completamente a funcionalidade e os recursos que eles adicionam a este site. É recomendável que você deixe todos os cookies se não tiver certeza se precisa ou não deles, caso sejam usados para fornecer um serviço que você usa.</p>`
+    },
+    lgpd: {
+        title: 'Conformidade com a LGPD',
+        content: `
+            <p>A Next Evolution está em conformidade com a Lei Geral de Proteção de Dados (LGPD), Lei nº 13.709/2018, que visa proteger os dados pessoais de todos os cidadãos.</p>
+            <h4>Seus Direitos</h4>
+            <p>Você tem o direito de solicitar acesso, correção, exclusão ou portabilidade dos seus dados. Também pode retirar o consentimento ou opor-se ao processamento a qualquer momento.</p>
+            <h4>Contato do DPO</h4>
+            <p>Para exercer seus direitos ou para quaisquer dúvidas relacionadas à proteção de seus dados, entre em contato com nosso Encarregado de Proteção de Dados (DPO) através do e-mail: dpo@nextevolution.ia.br</p>`
+    }
+};
+
+const openLegalModal = (page: string) => {
+    const content = legalContent[page as keyof typeof legalContent];
+    if (content && legalModalTitle && legalModalContent && legalModalOverlay) {
+        legalModalTitle.textContent = content.title;
+        legalModalContent.innerHTML = content.content;
+        legalModalOverlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+};
+
+const closeLegalModal = () => {
+    if (legalModalOverlay) {
+        legalModalOverlay.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+};
+
+legalModalCloseBtn?.addEventListener('click', closeLegalModal);
+
+legalModalOverlay?.addEventListener('click', (e) => {
+    if (e.target === legalModalOverlay) {
+        closeLegalModal();
+    }
+});
+
+
+// --- Contact Modal Logic ---
+
+const contactModalOverlay = document.getElementById('contact-modal-overlay');
+const contactModalCloseBtn = document.querySelector('#contact-modal .modal-close-btn');
+const contactForm = document.getElementById('contact-form') as HTMLFormElement;
+
+const openContactModal = () => {
+    if (contactModalOverlay) {
+        contactModalOverlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+};
+
+const closeContactModal = () => {
+    if (contactModalOverlay) {
+        contactModalOverlay.classList.remove('show');
+        document.body.style.overflow = '';
+        contactForm?.reset();
+    }
+};
+
+contactModalCloseBtn?.addEventListener('click', closeContactModal);
+
+contactModalOverlay?.addEventListener('click', (e) => {
+    if (e.target === contactModalOverlay) {
+        closeContactModal();
+    }
+});
+
+contactForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const name = (contactForm.elements.namedItem('name') as HTMLInputElement)?.value;
+    const email = (contactForm.elements.namedItem('email') as HTMLInputElement)?.value;
+    const phone = (contactForm.elements.namedItem('phone') as HTMLInputElement)?.value;
+    const city = (contactForm.elements.namedItem('city') as HTMLInputElement)?.value;
+
+    if (name && email && phone && city) {
+        const phoneNumber = '5519974036518';
+        const message = `Olá! Gostaria de solicitar uma consultoria.\n\n*Nome:* ${name}\n*E-mail:* ${email}\n*Telefone:* ${phone}\n*Cidade:* ${city}`;
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+        window.open(whatsappUrl, '_blank');
+        closeContactModal();
+    }
+});
+
+
+// --- Global Modal Triggers ---
+
+modalTriggers.forEach(trigger => {
+    trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = trigger.dataset.modalTrigger;
+        if (page) {
+            if (page in legalContent) {
+                openLegalModal(page);
+            } else if (page === 'contact') {
+                openContactModal();
+            }
+        }
+    });
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (legalModalOverlay?.classList.contains('show')) {
+            closeLegalModal();
+        }
+        if (contactModalOverlay?.classList.contains('show')) {
+            closeContactModal();
+        }
+    }
+});
+
+// --- Smooth Scrolling for Anchor Links ---
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (this: HTMLAnchorElement, e: MouseEvent) {
+        // Exclude modal triggers and simple hash links from this custom scrolling logic
+        if (this.dataset.modalTrigger || this.getAttribute('href') === '#') {
+            return;
+        }
+
+        const href = this.getAttribute('href');
+        if (!href) return;
+
+        const targetElement = document.querySelector<HTMLElement>(href);
+
+        if (targetElement) {
+            e.preventDefault();
+            const header = document.querySelector<HTMLElement>('.header');
+            const headerHeight = header ? header.offsetHeight : 80; // Get header height, fallback to 80px
+            
+            // For #hero link, just scroll to the very top.
+            if (href === '#hero') {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                return;
+            }
+
+            // Calculate position to scroll to, accounting for the fixed header
+            const targetPosition = targetElement.offsetTop - headerHeight;
+
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        }
     });
 });
