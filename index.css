@@ -330,33 +330,40 @@ section[id] {
 }
 
 /* Why Us Section */
-.why-us-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
+.why-us {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
-.why-us-image img {
-    width: 100%;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+.why-us-container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.why-us-image {
+    display: none;
 }
 
 .why-us-content h2 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
+    color: var(--text-dark);
 }
 
 .why-us-content > p {
     font-size: 1.1rem;
     color: #4b5563;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .why-us-content ul {
     list-style: none;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    display: inline-block;
+    text-align: left;
 }
 
 .why-us-content ul li {
@@ -365,6 +372,7 @@ section[id] {
     gap: 0.75rem;
     margin-bottom: 1rem;
     font-size: 1.05rem;
+    color: var(--text-dark);
 }
 
 .why-us-content ul li svg {
@@ -473,6 +481,7 @@ section[id] {
     text-decoration: none; /* Add this */
     font-size: 1.5rem;
     font-weight: 700;
+    align-items: center;
 }
 
 .footer .logo svg {
