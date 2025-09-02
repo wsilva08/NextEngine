@@ -18,6 +18,28 @@ window.addEventListener('scroll', () => {
     }
 });
 
+// --- Hamburger Menu ---
+const hamburger = document.querySelector('.hamburger');
+const navMenu = document.querySelector('.nav-menu');
+
+const toggleNav = () => {
+    hamburger?.classList.toggle('is-active');
+    navMenu?.classList.toggle('is-active');
+    document.body.classList.toggle('no-scroll');
+};
+
+hamburger?.addEventListener('click', toggleNav);
+
+// Close menu when a nav link is clicked
+document.querySelectorAll('.nav-menu a[href^="#"]').forEach(navLink => {
+    navLink.addEventListener('click', () => {
+        if (navMenu?.classList.contains('is-active')) {
+            toggleNav();
+        }
+    });
+});
+
+
 // Handle "Back to Top" button visibility and functionality
 const backToTopButton = document.querySelector('.back-to-top');
 
@@ -175,6 +197,10 @@ modalTriggers.forEach(trigger => {
             if (page in legalContent) {
                 openLegalModal(page);
             } else if (page === 'contact') {
+                // If mobile nav is open, close it before opening the modal
+                if (navMenu?.classList.contains('is-active')) {
+                   toggleNav();
+                }
                 openContactModal();
             }
         }
