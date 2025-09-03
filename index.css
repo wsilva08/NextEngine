@@ -737,17 +737,6 @@ section[id] {
     flex-direction: column;
 }
 
-.form-group-inline {
-    display: flex;
-    gap: 1rem;
-}
-
-.form-group-inline .form-group {
-    flex: 1;
-    min-width: 0; /* Prevents flex items from overflowing when content is long */
-}
-
-
 .form-group label {
     margin-bottom: 0.4rem;
     font-weight: 600;

@@ -208,7 +208,7 @@ stateSelect?.addEventListener('change', () => {
     const selectedState = states.find(s => s.sigla === selectedStateAbbr);
 
     if (selectedState) {
-        citySelect.innerHTML = '<option value="">Selecione...</option>';
+        citySelect.innerHTML = '<option value="">Selecione o estado</option>';
         selectedState.cidades.forEach(city => {
             const option = document.createElement('option');
             option.value = city;
@@ -217,7 +217,7 @@ stateSelect?.addEventListener('change', () => {
         });
         citySelect.disabled = false;
     } else {
-        citySelect.innerHTML = '<option value="">Escolha a cidade</option>';
+        citySelect.innerHTML = '<option value="">Selecione a cidade</option>';
         citySelect.disabled = true;
     }
 });
