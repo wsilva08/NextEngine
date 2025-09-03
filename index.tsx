@@ -79,7 +79,7 @@ const legalContent = {
     privacy: {
         title: 'Política de Privacidade',
         content: `
-            <p>A sua privacidade é importante para nós. É política do Next Evolution respeitar a sua privacidade em relação a qualquer informação sua que possamos coletar no site Next Evolution, e outros sites que possuímos e operamos.</p>
+            <p>A sua privacidade é importante para nós. É política da Next Evolution respeitar a sua privacidade em relação a qualquer informação sua que possamos coletar no site Next Evolution, e outros sites que possuímos e operamos.</p>
             <h4>1. Coleta de Informações</h4>
             <p>Solicitamos informações pessoais apenas quando realmente precisamos delas para lhe fornecer um serviço. Fazemo-lo por meios justos e legais, com o seu conhecimento e consentimento. Também informamos por que estamos coletando e como será usado.</p>
             <h4>2. Uso de Informações</h4>
