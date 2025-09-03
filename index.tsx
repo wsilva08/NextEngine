@@ -32,23 +32,18 @@ if (hamburger && navMenu) {
 
     hamburger.addEventListener('click', toggleNav);
 
-    // Close menu when a nav link is clicked
-    navMenu.querySelectorAll('a[href^="#"]').forEach(navLink => {
-        navLink.addEventListener('click', () => {
-            if (navMenu.classList.contains('is-active')) {
-                toggleNav();
-            }
-        });
-    });
+    // Use event delegation for closing the menu.
+    // This is more efficient and reliable than adding listeners to each link.
+    navMenu.addEventListener('click', (e) => {
+        // Check if the clicked element is an anchor tag or has an anchor tag as a parent.
+        const target = e.target as HTMLElement;
+        const link = target.closest('a');
 
-    // Also close menu for the main contact button inside the mobile nav
-    const contactButtonInNav = navMenu.querySelector<HTMLAnchorElement>('.nav-actions a[data-modal-trigger="contact"]');
-    contactButtonInNav?.addEventListener('click', () => {
-         if (navMenu.classList.contains('is-active')) {
+        // If a link was clicked inside an active nav menu, close the menu.
+        if (link && navMenu.classList.contains('is-active')) {
             toggleNav();
         }
     });
-
 } else {
     console.error('Hamburger or Nav Menu not found.');
 }
