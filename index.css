@@ -131,9 +131,8 @@ section[id] {
   left: 0;
   width: 100%;
   z-index: 1000;
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  background-color: var(--dark-bg);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   transition: background-color 0.3s;
 }
 
@@ -148,7 +147,7 @@ section[id] {
   font-size: 1.5rem;
   font-weight: 700;
   text-decoration: none;
-  color: var(--text-dark);
+  color: var(--white);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -157,10 +156,10 @@ section[id] {
     color: var(--primary-green);
 }
 .logo-text {
-    background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    color: inherit;
 }
 
 .nav-menu {
@@ -177,7 +176,7 @@ section[id] {
 
 .nav-links a {
   text-decoration: none;
-  color: var(--text-dark);
+  color: var(--white);
   font-weight: 600;
   position: relative;
   display: block;
@@ -233,6 +232,7 @@ section[id] {
     padding: 0.75rem 1.5rem;
     white-space: nowrap;
     transition: background-color 0.2s, color 0.2s;
+    color: var(--text-dark); /* Dropdown items should be dark on white bg */
 }
 
 .dropdown-menu li a:hover {
@@ -248,7 +248,7 @@ section[id] {
 }
 
 .social-icon {
-    color: var(--text-dark);
+    color: var(--white);
     transition: color 0.3s ease;
 }
 
@@ -274,7 +274,7 @@ section[id] {
     height: 3px;
     margin: 5px auto;
     transition: all 0.3s ease-in-out;
-    background-color: var(--text-dark);
+    background-color: var(--white);
 }
 
 
@@ -902,7 +902,7 @@ section[id] {
         top: 0;
         left: 0;
         width: 100%;
-        height: 100%;
+        height: 100vh; /* Use vh for reliable full height */
         flex-direction: column;
         justify-content: center;
         align-items: center;
@@ -933,20 +933,58 @@ section[id] {
     }
     
     .nav-links > li > a::after {
-        background-color: var(--primary-green);
+       display: none; /* Remove hover underline on mobile */
     }
 
-    .nav-item-dropdown:hover .dropdown-menu {
-        display: none; /* Disable dropdown on mobile nav */
+    /* Mobile Dropdown */
+    .nav-item-dropdown {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .dropdown-menu {
+        display: none;
+        position: static;
+        background-color: transparent;
+        box-shadow: none;
+        border-radius: 0;
+        list-style: none;
+        padding: 0.5rem 0 0;
+        margin-top: 1rem;
+        min-width: auto;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        transition: none;
+        width: 100%;
+    }
+
+    .nav-item-dropdown.open > .dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-menu li {
+        padding: 0.25rem 0;
+    }
+    .dropdown-menu li a {
+        padding: 0.5rem 1rem;
+        white-space: nowrap;
+        color: #9ca3af; /* Lighter gray for sub-items */
+        font-size: 1.2rem;
+    }
+    .dropdown-menu li a:hover {
+        background-color: transparent;
+        color: var(--primary-green);
     }
 
     .nav-actions {
         flex-direction: column;
         gap: 1.5rem;
     }
-    .nav-actions .social-icon svg {
-        fill: var(--white);
+    .nav-actions .social-icon {
         color: var(--white);
+    }
+    .nav-actions .social-icon svg {
         width: 32px;
         height: 32px;
     }

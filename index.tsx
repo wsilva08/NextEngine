@@ -7,20 +7,6 @@ import { states } from './brazil-states-cities';
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Handle header style change on scroll
-    const header = document.querySelector<HTMLElement>('.header');
-    window.addEventListener('scroll', () => {
-        if (header) {
-            if (window.scrollY > 50) {
-                header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-                header.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
-            } else {
-                header.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-                header.style.boxShadow = 'none';
-            }
-        }
-    });
-
     // --- Hamburger Menu ---
     const hamburger = document.querySelector<HTMLButtonElement>('.hamburger');
     const navMenu = document.querySelector<HTMLElement>('.nav-menu');
@@ -42,7 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const link = target.closest('a');
 
             // If a link was clicked inside an active nav menu, close the menu.
-            if (link && navMenu.classList.contains('is-active')) {
+            // Exclude dropdown toggle from closing the menu immediately.
+            if (link && !link.parentElement?.classList.contains('nav-item-dropdown') && navMenu.classList.contains('is-active')) {
+                toggleNav();
+            } else if (link && link.parentElement?.classList.contains('nav-item-dropdown') && link.closest('.dropdown-menu')) {
+                // If a link inside the dropdown is clicked, close the main menu.
                 toggleNav();
             }
         });
@@ -50,6 +40,17 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Hamburger or Nav Menu not found.');
     }
 
+    // --- Mobile Dropdown Menu ---
+    const dropdownToggle = document.querySelector<HTMLAnchorElement>('.nav-item-dropdown > a');
+    if (dropdownToggle) {
+        dropdownToggle.addEventListener('click', (e) => {
+            if (window.innerWidth <= 992) {
+                e.preventDefault(); // Prevent page from jumping to #cases anchor
+                const parentLi = dropdownToggle.parentElement;
+                parentLi?.classList.toggle('open');
+            }
+        });
+    }
 
     // Handle "Back to Top" button visibility and functionality
     const backToTopButton = document.querySelector('.back-to-top');
