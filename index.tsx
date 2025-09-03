@@ -20,25 +20,38 @@ window.addEventListener('scroll', () => {
 });
 
 // --- Hamburger Menu ---
-const hamburger = document.querySelector('.hamburger');
-const navMenu = document.querySelector('.nav-menu');
+const hamburger = document.querySelector<HTMLButtonElement>('.hamburger');
+const navMenu = document.querySelector<HTMLElement>('.nav-menu');
 
-const toggleNav = () => {
-    hamburger?.classList.toggle('is-active');
-    navMenu?.classList.toggle('is-active');
-    document.body.classList.toggle('no-scroll');
-};
+if (hamburger && navMenu) {
+    const toggleNav = () => {
+        hamburger.classList.toggle('is-active');
+        navMenu.classList.toggle('is-active');
+        document.body.classList.toggle('no-scroll');
+    };
 
-hamburger?.addEventListener('click', toggleNav);
+    hamburger.addEventListener('click', toggleNav);
 
-// Close menu when a nav link is clicked
-document.querySelectorAll('.nav-menu a[href^="#"]').forEach(navLink => {
-    navLink.addEventListener('click', () => {
-        if (navMenu?.classList.contains('is-active')) {
+    // Close menu when a nav link is clicked
+    navMenu.querySelectorAll('a[href^="#"]').forEach(navLink => {
+        navLink.addEventListener('click', () => {
+            if (navMenu.classList.contains('is-active')) {
+                toggleNav();
+            }
+        });
+    });
+
+    // Also close menu for the main contact button inside the mobile nav
+    const contactButtonInNav = navMenu.querySelector<HTMLAnchorElement>('.nav-actions a[data-modal-trigger="contact"]');
+    contactButtonInNav?.addEventListener('click', () => {
+         if (navMenu.classList.contains('is-active')) {
             toggleNav();
         }
     });
-});
+
+} else {
+    console.error('Hamburger or Nav Menu not found.');
+}
 
 
 // Handle "Back to Top" button visibility and functionality
@@ -280,10 +293,6 @@ modalTriggers.forEach(trigger => {
             if (page in legalContent) {
                 openLegalModal(page);
             } else if (page === 'contact') {
-                // If mobile nav is open, close it before opening the modal
-                if (navMenu?.classList.contains('is-active')) {
-                   toggleNav();
-                }
                 openContactModal();
             }
         }
