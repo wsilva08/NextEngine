@@ -41,16 +41,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Mobile Dropdown Menu ---
-    const dropdownToggle = document.querySelector<HTMLAnchorElement>('.nav-item-dropdown > a');
-    if (dropdownToggle) {
+    document.querySelectorAll('.nav-item-dropdown > a').forEach(dropdownToggle => {
         dropdownToggle.addEventListener('click', (e) => {
             if (window.innerWidth <= 992) {
-                e.preventDefault(); // Prevent page from jumping to #cases anchor
-                const parentLi = dropdownToggle.parentElement;
+                e.preventDefault();
+                e.stopPropagation(); // Prevent event from bubbling up to navMenu's listener
+                const parentLi = (e.currentTarget as HTMLElement).parentElement;
                 parentLi?.classList.toggle('open');
             }
         });
-    }
+    });
 
     // Handle "Back to Top" button visibility and functionality
     const backToTopButton = document.querySelector('.back-to-top');
@@ -319,6 +319,11 @@ document.addEventListener('DOMContentLoaded', () => {
         anchor.addEventListener('click', function (this: HTMLAnchorElement, e: MouseEvent) {
             // Exclude modal triggers from this custom scrolling logic
             if (this.dataset.modalTrigger) {
+                return;
+            }
+            
+            // Exclude dropdown toggle on mobile from scrolling
+            if (window.innerWidth <= 992 && this.parentElement?.classList.contains('nav-item-dropdown')) {
                 return;
             }
 
