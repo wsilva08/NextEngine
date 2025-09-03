@@ -334,3 +334,31 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// --- Cookie Consent Banner ---
+const cookieBanner = document.getElementById('cookie-banner');
+const acceptCookiesBtn = document.getElementById('cookie-accept');
+const rejectCookiesBtn = document.getElementById('cookie-reject');
+
+const checkCookieConsent = () => {
+    const consent = localStorage.getItem('cookie_consent');
+    if (!consent && cookieBanner) {
+        // Use a timeout to ensure the banner animation is smooth on page load
+        setTimeout(() => {
+            cookieBanner.classList.add('show');
+        }, 500);
+    }
+};
+
+const handleCookieConsent = (consentValue: 'accepted' | 'rejected') => {
+    localStorage.setItem('cookie_consent', consentValue);
+    if (cookieBanner) {
+        cookieBanner.classList.remove('show');
+    }
+};
+
+acceptCookiesBtn?.addEventListener('click', () => handleCookieConsent('accepted'));
+rejectCookiesBtn?.addEventListener('click', () => handleCookieConsent('rejected'));
+
+// Check for consent when the page loads
+window.addEventListener('load', checkCookieConsent);

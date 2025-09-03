@@ -826,6 +826,60 @@ section[id] {
     color: var(--primary-green);
 }
 
+/* Cookie Consent Banner */
+.cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    padding: 1rem 0;
+    z-index: 1500;
+    transform: translateY(100%);
+    transition: transform 0.5s ease-in-out;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+    display: none; /* Hidden by default, JS will show it */
+}
+.cookie-banner.show {
+    display: block;
+    transform: translateY(0);
+}
+.cookie-banner-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+.cookie-banner p {
+    margin: 0;
+    flex-grow: 1;
+}
+.cookie-banner a {
+    color: var(--primary-green);
+    text-decoration: underline;
+    font-weight: 600;
+}
+.cookie-banner-actions {
+    display: flex;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+.cookie-banner .btn.btn-outline {
+    border-color: #6b7280;
+    color: var(--text-light);
+    padding: 0.5rem 1rem;
+}
+.cookie-banner .btn.btn-outline:hover {
+    background-color: var(--white);
+    color: var(--dark-bg);
+    border-color: var(--white);
+}
+.cookie-banner .btn.btn-blue {
+    padding: 0.5rem 1rem;
+}
+
 /* Responsive */
 @media (max-width: 992px) {
     .hamburger {
@@ -946,5 +1000,10 @@ section[id] {
     }
     .cases-grid {
         grid-template-columns: 1fr;
+    }
+    .cookie-banner-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
     }
 }
