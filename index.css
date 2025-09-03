@@ -766,10 +766,17 @@ section[id] {
     padding-top: 0.85rem;
     padding-bottom: 0.85rem;
     font-size: 1.1rem;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     font-weight: 600;
     box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1);
     transition: all 0.3s ease;
+}
+
+.btn.btn-full-width:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .btn.btn-full-width:hover {
@@ -777,6 +784,16 @@ section[id] {
     box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
 }
 
+.form-status {
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    min-height: 1.2em; /* Reserve space to prevent layout shift */
+    margin-bottom: 0.5rem;
+}
+.form-status.success {
+    color: var(--primary-green);
+}
 
 /* Responsive */
 @media (max-width: 992px) {

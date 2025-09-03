@@ -64,13 +64,15 @@ backToTopButton?.addEventListener('click', (e) => {
 // --- Modal Handling ---
 
 const modalTriggers = document.querySelectorAll<HTMLAnchorElement>('[data-modal-trigger]');
+let lastActiveElement: HTMLElement | null = null;
+
 
 // --- Legal Modal Logic ---
 
 const legalModalOverlay = document.getElementById('legal-modal-overlay');
 const legalModalTitle = document.getElementById('modal-title');
 const legalModalContent = document.getElementById('modal-content');
-const legalModalCloseBtn = document.querySelector('#legal-modal .modal-close-btn');
+const legalModalCloseBtn = document.querySelector('#legal-modal .modal-close-btn') as HTMLButtonElement;
 
 const legalContent = {
     privacy: {
@@ -116,10 +118,12 @@ const legalContent = {
 const openLegalModal = (page: string) => {
     const content = legalContent[page as keyof typeof legalContent];
     if (content && legalModalTitle && legalModalContent && legalModalOverlay) {
+        lastActiveElement = document.activeElement as HTMLElement;
         legalModalTitle.textContent = content.title;
         legalModalContent.innerHTML = content.content;
         legalModalOverlay.classList.add('show');
         document.body.style.overflow = 'hidden';
+        legalModalCloseBtn?.focus();
     }
 };
 
@@ -127,6 +131,7 @@ const closeLegalModal = () => {
     if (legalModalOverlay) {
         legalModalOverlay.classList.remove('show');
         document.body.style.overflow = '';
+        lastActiveElement?.focus();
     }
 };
 
@@ -142,13 +147,18 @@ legalModalOverlay?.addEventListener('click', (e) => {
 // --- Contact Modal Logic ---
 
 const contactModalOverlay = document.getElementById('contact-modal-overlay');
-const contactModalCloseBtn = document.querySelector('#contact-modal .modal-close-btn');
+const contactModalCloseBtn = document.querySelector('#contact-modal .modal-close-btn') as HTMLButtonElement;
 const contactForm = document.getElementById('contact-form') as HTMLFormElement;
+const formStatus = document.getElementById('form-status');
+const submitButton = contactForm?.querySelector('button[type="submit"]') as HTMLButtonElement;
+
 
 const openContactModal = () => {
     if (contactModalOverlay) {
+        lastActiveElement = document.activeElement as HTMLElement;
         contactModalOverlay.classList.add('show');
         document.body.style.overflow = 'hidden';
+        contactModalCloseBtn?.focus();
     }
 };
 
@@ -157,6 +167,15 @@ const closeContactModal = () => {
         contactModalOverlay.classList.remove('show');
         document.body.style.overflow = '';
         contactForm?.reset();
+        lastActiveElement?.focus();
+        if(formStatus) {
+            formStatus.textContent = '';
+            formStatus.className = 'form-status';
+        }
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Enviar';
+        }
     }
 };
 
@@ -177,12 +196,23 @@ contactForm?.addEventListener('submit', (e) => {
     const city = (contactForm.elements.namedItem('city') as HTMLInputElement)?.value;
 
     if (name && email && phone && city) {
-        const phoneNumber = '5519974036518';
-        const message = `Olá! Gostaria de solicitar uma consultoria.\n\n*Nome:* ${name}\n*E-mail:* ${email}\n*Telefone:* ${phone}\n*Cidade:* ${city}`;
-        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+        if(submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Enviando...';
+        }
+        if (formStatus) {
+            formStatus.textContent = 'Sucesso! Redirecionando para o WhatsApp...';
+            formStatus.className = 'form-status success';
+        }
 
-        window.open(whatsappUrl, '_blank');
-        closeContactModal();
+        setTimeout(() => {
+            const phoneNumber = '5519974036518';
+            const message = `Olá! Gostaria de solicitar uma consultoria.\n\n*Nome:* ${name}\n*E-mail:* ${email}\n*Telefone:* ${phone}\n*Cidade:* ${city}`;
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+            window.open(whatsappUrl, '_blank');
+            closeContactModal();
+        }, 1500);
     }
 });
 
@@ -221,36 +251,32 @@ document.addEventListener('keydown', (e) => {
 // --- Smooth Scrolling for Anchor Links ---
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (this: HTMLAnchorElement, e: MouseEvent) {
-        // Exclude modal triggers and simple hash links from this custom scrolling logic
-        if (this.dataset.modalTrigger || this.getAttribute('href') === '#') {
+        // Exclude modal triggers from this custom scrolling logic
+        if (this.dataset.modalTrigger) {
             return;
         }
 
+        e.preventDefault(); // Prevent default anchor behavior
+
         const href = this.getAttribute('href');
-        if (!href) return;
 
-        const targetElement = document.querySelector<HTMLElement>(href);
-
-        if (targetElement) {
-            e.preventDefault();
-            const header = document.querySelector<HTMLElement>('.header');
-            const headerHeight = header ? header.offsetHeight : 80; // Get header height, fallback to 80px
-            
-            // For #hero link, just scroll to the very top.
-            if (href === '#hero') {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-                return;
-            }
-
-            // Calculate position to scroll to, accounting for the fixed header
-            const targetPosition = targetElement.offsetTop - headerHeight;
-
+        // Special case for scrolling to the very top
+        if (!href || href === '#' || href === '#hero') {
             window.scrollTo({
-                top: targetPosition,
+                top: 0,
                 behavior: 'smooth'
+            });
+            return;
+        }
+
+        // For all other sections
+        const targetElement = document.querySelector<HTMLElement>(href);
+        if (targetElement) {
+            // The CSS 'scroll-padding-top' is respected by scrollIntoView,
+            // ensuring the section is not hidden behind the fixed header.
+            targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
             });
         }
     });
