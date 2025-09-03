@@ -502,18 +502,10 @@ section[id] {
 }
 
 .footer-about .logo {
-    color: var(--white);
     margin-bottom: 1rem;
     display: inline-flex;
-    text-decoration: none;
-    font-size: 1.5rem;
-    font-weight: 700;
-    align-items: center;
 }
 
-.footer .logo svg {
-    color: inherit;
-}
 .footer .logo .logo-text {
      background: none;
     -webkit-background-clip: unset;
