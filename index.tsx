@@ -154,14 +154,16 @@ const formStatus = document.getElementById('form-status');
 const submitButton = contactForm?.querySelector('button[type="submit"]') as HTMLButtonElement;
 const stateSelect = document.getElementById('contact-state') as HTMLSelectElement;
 const citySelect = document.getElementById('contact-city') as HTMLSelectElement;
-
+const phoneInput = document.getElementById('contact-phone') as HTMLInputElement;
 
 const openContactModal = () => {
     if (contactModalOverlay) {
         lastActiveElement = document.activeElement as HTMLElement;
         contactModalOverlay.classList.add('show');
         document.body.style.overflow = 'hidden';
-        contactModalCloseBtn?.focus();
+        // Focus the first input field
+        const firstInput = contactForm.querySelector<HTMLInputElement>('input[name="name"]');
+        firstInput?.focus();
     }
 };
 
@@ -221,6 +223,21 @@ stateSelect?.addEventListener('change', () => {
         citySelect.disabled = true;
     }
 });
+
+// Phone mask
+const formatPhoneNumber = (value: string) => {
+    if (!value) return "";
+    value = value.replace(/\D/g,'');
+    value = value.replace(/(\d{2})(\d)/,"($1) $2");
+    value = value.replace(/(\d)(\d{4})$/,"$1-$2");
+    return value;
+}
+
+phoneInput?.addEventListener('input', (e) => {
+    const target = e.target as HTMLInputElement;
+    target.value = formatPhoneNumber(target.value);
+});
+
 
 contactForm?.addEventListener('submit', (e) => {
     e.preventDefault();
