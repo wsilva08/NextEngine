@@ -3,6 +3,7 @@
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
+import { states } from './brazil-states-cities';
 
 // Handle header style change on scroll
 const header = document.querySelector<HTMLElement>('.header');
@@ -151,6 +152,8 @@ const contactModalCloseBtn = document.querySelector('#contact-modal .modal-close
 const contactForm = document.getElementById('contact-form') as HTMLFormElement;
 const formStatus = document.getElementById('form-status');
 const submitButton = contactForm?.querySelector('button[type="submit"]') as HTMLButtonElement;
+const stateSelect = document.getElementById('contact-state') as HTMLSelectElement;
+const citySelect = document.getElementById('contact-city') as HTMLSelectElement;
 
 
 const openContactModal = () => {
@@ -167,6 +170,8 @@ const closeContactModal = () => {
         contactModalOverlay.classList.remove('show');
         document.body.style.overflow = '';
         contactForm?.reset();
+        citySelect.innerHTML = '<option value="">Escolha um estado</option>';
+        citySelect.disabled = true;
         lastActiveElement?.focus();
         if(formStatus) {
             formStatus.textContent = '';
@@ -187,15 +192,46 @@ contactModalOverlay?.addEventListener('click', (e) => {
     }
 });
 
+// Populate states dropdown
+states.forEach(state => {
+    const option = document.createElement('option');
+    option.value = state.sigla;
+    option.textContent = state.nome;
+    stateSelect?.appendChild(option);
+});
+
+// Handle state change to populate cities
+stateSelect?.addEventListener('change', () => {
+    const selectedStateAbbr = stateSelect.value;
+    citySelect.innerHTML = '<option value="">Carregando...</option>';
+
+    const selectedState = states.find(s => s.sigla === selectedStateAbbr);
+
+    if (selectedState) {
+        citySelect.innerHTML = '<option value="">Selecione...</option>';
+        selectedState.cidades.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
+        });
+        citySelect.disabled = false;
+    } else {
+        citySelect.innerHTML = '<option value="">Escolha um estado</option>';
+        citySelect.disabled = true;
+    }
+});
+
 contactForm?.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const name = (contactForm.elements.namedItem('name') as HTMLInputElement)?.value;
     const email = (contactForm.elements.namedItem('email') as HTMLInputElement)?.value;
     const phone = (contactForm.elements.namedItem('phone') as HTMLInputElement)?.value;
-    const city = (contactForm.elements.namedItem('city') as HTMLInputElement)?.value;
+    const state = (contactForm.elements.namedItem('state') as HTMLSelectElement)?.value;
+    const city = (contactForm.elements.namedItem('city') as HTMLSelectElement)?.value;
 
-    if (name && email && phone && city) {
+    if (name && email && phone && state && city) {
         if(submitButton) {
             submitButton.disabled = true;
             submitButton.textContent = 'Enviando...';
@@ -207,7 +243,7 @@ contactForm?.addEventListener('submit', (e) => {
 
         setTimeout(() => {
             const phoneNumber = '5519974036518';
-            const message = `Olá! Gostaria de solicitar uma consultoria.\n\n*Nome:* ${name}\n*E-mail:* ${email}\n*Telefone:* ${phone}\n*Cidade:* ${city}`;
+            const message = `Olá! Gostaria de solicitar uma consultoria.\n\n*Nome:* ${name}\n*E-mail:* ${email}\n*Telefone:* ${phone}\n*Cidade:* ${city} - ${state}`;
             const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
             window.open(whatsappUrl, '_blank');
