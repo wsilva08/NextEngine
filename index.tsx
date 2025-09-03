@@ -95,7 +95,7 @@ const legalContent = {
             <h4>2. Uso de Licença</h4>
             <p>É concedida permissão para baixar temporariamente uma cópia dos materiais (informações ou software) no site Next Evolution, apenas para visualização transitória pessoal e não comercial. Esta é a concessão de uma licença, não uma transferência de título.</p>
             <h4>3. Limitações</h4>
-            <p>Em nenhum caso o Next Evolution ou seus fornecedores serão responsáveis por quaisquer danos (incluindo, sem limitação, danos por perda de dados ou lucro ou devido a interrupção dos negócios) decorrentes do uso ou da incapacidade de usar os materiais em Next Evolution.</p>`
+            <p>Em nenhum caso a Next Evolution ou seus fornecedores serão responsáveis por quaisquer danos (incluindo, sem limitação, danos por perda de dados ou lucro ou devido a interrupção dos negócios) decorrentes do uso ou da incapacidade de usar os materiais em Next Evolution.</p>`
     },
     cookies: {
         title: 'Política de Cookies',
