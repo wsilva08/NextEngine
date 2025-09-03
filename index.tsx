@@ -208,7 +208,7 @@ stateSelect?.addEventListener('change', () => {
     const selectedState = states.find(s => s.sigla === selectedStateAbbr);
 
     if (selectedState) {
-        citySelect.innerHTML = '<option value="">Selecione o estado</option>';
+        citySelect.innerHTML = '<option value="">Selecione a cidade</option>';
         selectedState.cidades.forEach(city => {
             const option = document.createElement('option');
             option.value = city;
