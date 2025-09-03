@@ -170,7 +170,7 @@ const closeContactModal = () => {
         contactModalOverlay.classList.remove('show');
         document.body.style.overflow = '';
         contactForm?.reset();
-        citySelect.innerHTML = '<option value="">Escolha um estado</option>';
+        citySelect.innerHTML = '<option value="">Escolha a cidade</option>';
         citySelect.disabled = true;
         lastActiveElement?.focus();
         if(formStatus) {
@@ -217,7 +217,7 @@ stateSelect?.addEventListener('change', () => {
         });
         citySelect.disabled = false;
     } else {
-        citySelect.innerHTML = '<option value="">Escolha um estado</option>';
+        citySelect.innerHTML = '<option value="">Escolha a cidade</option>';
         citySelect.disabled = true;
     }
 });
