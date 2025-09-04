@@ -4,7 +4,7 @@ This guide provides instructions on how to deploy the Next Evolution landing pag
 
 We will use Nginx as the web server to serve the static files.
 
-## Prerequisites
+## Pre requisites
 
 Before you begin, ensure you have the following:
 
