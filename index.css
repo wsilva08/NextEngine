@@ -150,10 +150,12 @@ section[id] {
   color: var(--white);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 .logo-icon {
-    color: var(--primary-green);
+    height: 32px;
+    width: auto;
+    vertical-align: middle;
 }
 .logo-text {
     background: none;
@@ -445,17 +447,19 @@ section[id] {
 /* Cases Section */
 .cases-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
 }
 
 .case-card {
     background-color: var(--white);
-    padding: 2.5rem 2rem;
+    padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     transition: transform 0.3s, box-shadow 0.3s;
     border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
 }
 
 .case-card:hover {
@@ -474,6 +478,7 @@ section[id] {
     justify-content: center;
     align-items: center;
     margin-bottom: 1.5rem;
+    flex-shrink: 0;
 }
 
 .case-icon svg {
@@ -482,10 +487,34 @@ section[id] {
 }
 
 .case-card h3 {
-    font-size: 1.4rem;
-    margin-bottom: 0.75rem;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
 }
 
+.case-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    flex-grow: 1;
+}
+
+.case-card ul li {
+    color: #4b5563;
+    position: relative;
+    padding-left: 1.5em;
+    margin-bottom: 0.75em;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.case-card ul li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--primary-green);
+    font-weight: 600;
+}
 
 /* Footer */
 .footer {
@@ -872,6 +901,17 @@ section[id] {
 
 
 /* Responsive Styles */
+@media (min-width: 640px) {
+    .cases-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (min-width: 1024px) {
+    .cases-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
 @media (max-width: 992px) {
     html {
         scroll-padding-top: 70px;
@@ -1050,7 +1090,7 @@ section[id] {
     .section-header h2, .why-us-content h2 {
         font-size: 2rem;
     }
-    .services-grid, .cases-grid {
+    .services-grid {
         grid-template-columns: 1fr;
     }
     .why-us {
