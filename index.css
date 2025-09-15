@@ -424,6 +424,15 @@ section[id] {
 }
 .mission-card {
     text-align: center;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    background-color: var(--white);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.mission-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
 }
 .mission-icon {
     color: var(--primary-blue);
@@ -818,6 +827,19 @@ section[id] {
     appearance: none;
     color: var(--text-dark);
     width: 100%; /* Ensure inputs fill their container */
+}
+
+.form-group input.invalid,
+.form-group select.invalid {
+    border-color: #ef4444;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+    display: none; /* Controlled by JS */
 }
 
 .form-group select {

@@ -40,6 +40,58 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Hamburger or Nav Menu not found.');
     }
 
+    // --- Dynamic Favicon ---
+    const faviconLink = document.getElementById('favicon');
+
+    if (faviconLink) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 32;
+        canvas.height = 32;
+        const ctx = canvas.getContext('2d');
+
+        if (ctx) {
+            let angle = 0;
+            const primaryGreen = '#00bfa6';
+            const primaryBlue = '#2563eb';
+
+            const drawFavicon = () => {
+                // Clear canvas
+                ctx.clearRect(0, 0, 32, 32);
+
+                // Set font styles
+                ctx.font = 'bold 24px Poppins';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                // Create rotating gradient
+                const x0 = 16 + Math.cos(angle) * 16;
+                const y0 = 16 + Math.sin(angle) * 16;
+                const x1 = 16 - Math.cos(angle) * 16;
+                const y1 = 16 - Math.sin(angle) * 16;
+                const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+                gradient.addColorStop(0, primaryGreen);
+                gradient.addColorStop(1, primaryBlue);
+
+                // Apply gradient and draw text
+                ctx.fillStyle = gradient;
+                ctx.fillText('NE', 16, 17); // Y-axis adjusted for better visual centering
+
+                // Update angle for the next frame
+                angle += 0.03;
+
+                // Update favicon href with the new canvas data
+                faviconLink.setAttribute('href', canvas.toDataURL('image/png'));
+                
+                // Loop the animation
+                requestAnimationFrame(drawFavicon);
+            };
+
+            // Start the animation
+            drawFavicon();
+        }
+    }
+
+
     // --- Mobile Dropdown Menu ---
     document.querySelectorAll('.nav-item-dropdown > a').forEach(dropdownToggle => {
         dropdownToggle.addEventListener('click', (e) => {
@@ -90,11 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
         privacy: {
             title: 'Política de Privacidade',
             content: `
-                <p>A sua privacidade é importante para nós. É política da Next Evolution respeitar a sua privacidade em relação a qualquer informação sua que possamos coletar no site Next Evolution, e outros sites que possuímos e operamos.</p>
+                <p>A sua privacidade é importante para nós. É política da Next Engine respeitar a sua privacidade em relação a qualquer informação sua que possamos coletar no site Next Engine, e outros sites que possuímos e operamos.</p>
                 <h4>1. Coleta de Informações</h4>
                 <p>Solicitamos informações pessoais apenas quando realmente precisamos delas para lhe fornecer um serviço. Fazemo-lo por meios justos e legais, com o seu conhecimento e consentimento. Também informamos por que estamos coletando e como será usado.</p>
                 <h4>2. Uso de Informações</h4>
-                <p>Apenas retemos as informações coletadas pelo tempo necessário para fornecer o serviço solicitado. Quando armazenamos dados, protegemos dentro de meios comercialmente aceitáveis para evitar perdas e roubos, bem como acesso, divulgação, cópia, uso ou modificação não autorizados.</p>
+                <p>Apenas retemos as informações coletadas pelo tempo necessário para fornecer o serviço solicitado. Quando armazenamos dados, protegemos dentro de meios comercialmente aceitáveis para evitar perdas e roubos, bem como acesso, divulgação, cópia, uso ou modifição não autorizados.</p>
                 <h4>3. Divulgação a Terceiros</h4>
                 <p>Não compartilhamos informações de identificação pessoal publicamente ou com terceiros, exceto quando exigido por lei.</p>`
         },
@@ -102,11 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
             title: 'Termos de Uso',
             content: `
                 <h4>1. Aceitação dos Termos</h4>
-                <p>Ao acessar o site Next Evolution, concorda em cumprir estes termos de serviço, todas as leis e regulamentos aplicáveis e concorda que é responsável pelo cumprimento de todas as leis locais aplicáveis.</p>
+                <p>Ao acessar o site Next Engine, concorda em cumprir estes termos de serviço, todas as leis e regulamentos aplicáveis e concorda que é responsável pelo cumprimento de todas as leis locais aplicáveis.</p>
                 <h4>2. Uso de Licença</h4>
-                <p>É concedida permissão para baixar temporariamente uma cópia dos materiais (informações ou software) no site Next Evolution, apenas para visualização transitória pessoal e não comercial. Esta é a concessão de uma licença, não uma transferência de título.</p>
+                <p>É concedida permissão para baixar temporariamente uma cópia dos materiais (informações ou software) no site Next Engine, apenas para visualização transitória pessoal e não comercial. Esta é a concessão de uma licença, não uma transferência de título.</p>
                 <h4>3. Limitações</h4>
-                <p>Em nenhum caso a Next Evolution ou seus fornecedores serão responsáveis por quaisquer danos (incluindo, sem limitação, danos por perda de dados ou lucro ou devido a interrupção dos negócios) decorrentes do uso ou da incapacidade de usar os materiais em Next Evolution.</p>`
+                <p>Em nenhum caso a Next Engine ou seus fornecedores serão responsáveis por quaisquer danos (incluindo, sem limitação, danos por perda de dados ou lucro ou devido a interrupção dos negócios) decorrentes do uso ou da incapacidade de usar os materiais em Next Engine.</p>`
         },
         cookies: {
             title: 'Política de Cookies',
@@ -119,11 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
         lgpd: {
             title: 'Conformidade com a LGPD',
             content: `
-                <p>A Next Evolution está em conformidade com a Lei Geral de Proteção de Dados (LGPD), Lei nº 13.709/2018, que visa proteger os dados pessoais de todos os cidadãos.</p>
+                <p>A Next Engine está em conformidade com a Lei Geral de Proteção de Dados (LGPD), Lei nº 13.709/2018, que visa proteger os dados pessoais de todos os cidadãos.</p>
                 <h4>Seus Direitos</h4>
                 <p>Você tem o direito de solicitar acesso, correção, exclusão ou portabilidade dos seus dados. Também pode retirar o consentimento ou opor-se ao processamento a qualquer momento.</p>
                 <h4>Contato do DPO</h4>
-                <p>Para exercer seus direitos ou para quaisquer dúvidas relacionadas à proteção de seus dados, entre em contato com nosso Encarregado de Proteção de Dados (DPO) através do e-mail: dpo@nextevolution.ia.br</p>`
+                <p>Para exercer seus direitos ou para quaisquer dúvidas relacionadas à proteção de seus dados, entre em contato com nosso Encarregado de Proteção de Dados (DPO) através do e-mail: dpo@nextengine.com.br</p>`
         }
     };
 
@@ -183,10 +235,12 @@ document.addEventListener('DOMContentLoaded', () => {
             contactModalOverlay.classList.remove('show');
             document.body.style.overflow = '';
             contactForm?.reset();
-            if(citySelect) {
+            if (citySelect) {
                 citySelect.innerHTML = '<option value="">Selecione a cidade</option>';
                 citySelect.disabled = true;
             }
+            // Clear validation errors on close
+            contactForm?.querySelectorAll('.invalid').forEach(el => clearError(el as HTMLInputElement | HTMLSelectElement));
             lastActiveElement?.focus();
             if (formStatus) {
                 formStatus.textContent = '';
@@ -220,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle state change to populate cities
     stateSelect?.addEventListener('change', () => {
         const selectedStateAbbr = stateSelect.value;
-        if(citySelect) {
+        if (citySelect) {
             citySelect.innerHTML = '<option value="">Carregando...</option>';
 
             const selectedState = states.find(s => s.sigla === selectedStateAbbr);
@@ -256,16 +310,70 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
+    // --- Contact Form Validation ---
+
+    const showError = (input: HTMLInputElement | HTMLSelectElement, message: string) => {
+        input.classList.add('invalid');
+        const errorElement = input.nextElementSibling as HTMLElement;
+        if (errorElement && errorElement.classList.contains('error-message')) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+    };
+
+    const clearError = (input: HTMLInputElement | HTMLSelectElement) => {
+        input.classList.remove('invalid');
+        const errorElement = input.nextElementSibling as HTMLElement;
+        if (errorElement && errorElement.classList.contains('error-message')) {
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
+        }
+    };
+
+    const validateContactForm = (): boolean => {
+        let isValid = true;
+        const inputsToValidate = contactForm?.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input[required], select[required]');
+
+        inputsToValidate?.forEach(input => {
+            clearError(input); // Clear previous errors
+            if (!input.value.trim()) {
+                showError(input, 'Este campo é obrigatório.');
+                isValid = false;
+            }
+        });
+
+        if (!isValid) return false; // Early exit if any required field is empty
+
+        // Specific validations
+        const emailInput = contactForm?.elements.namedItem('email') as HTMLInputElement;
+        const phoneInput = contactForm?.elements.namedItem('phone') as HTMLInputElement;
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailInput && !emailRegex.test(emailInput.value)) {
+            showError(emailInput, 'Por favor, insira um e-mail válido.');
+            isValid = false;
+        }
+
+        const phoneDigits = phoneInput?.value.replace(/\D/g, '');
+        if (phoneInput && (phoneDigits.length < 10 || phoneDigits.length > 11)) {
+            showError(phoneInput, 'Por favor, insira um telefone válido com DDD.');
+            isValid = false;
+        }
+
+        return isValid;
+    };
+
+
     contactForm?.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const name = (contactForm.elements.namedItem('name') as HTMLInputElement)?.value;
-        const email = (contactForm.elements.namedItem('email') as HTMLInputElement)?.value;
-        const phone = (contactForm.elements.namedItem('phone') as HTMLInputElement)?.value;
-        const state = (contactForm.elements.namedItem('state') as HTMLSelectElement)?.value;
-        const city = (contactForm.elements.namedItem('city') as HTMLSelectElement)?.value;
+        if (validateContactForm()) {
+            const name = (contactForm.elements.namedItem('name') as HTMLInputElement)?.value;
+            const email = (contactForm.elements.namedItem('email') as HTMLInputElement)?.value;
+            const phone = (contactForm.elements.namedItem('phone') as HTMLInputElement)?.value;
+            const state = (contactForm.elements.namedItem('state') as HTMLSelectElement)?.value;
+            const city = (contactForm.elements.namedItem('city') as HTMLSelectElement)?.value;
 
-        if (name && email && phone && state && city) {
             if (submitButton) {
                 submitButton.disabled = true;
                 submitButton.textContent = 'Enviando...';
@@ -284,6 +392,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 closeContactModal();
             }, 1500);
         }
+    });
+    
+    // Clear validation on input
+    contactForm?.querySelectorAll('input, select').forEach(input => {
+        input.addEventListener('input', () => {
+            clearError(input as HTMLInputElement | HTMLSelectElement);
+        });
     });
 
 

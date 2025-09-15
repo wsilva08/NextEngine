@@ -1,6 +1,6 @@
-# Next Evolution - Deployment Guide
+# Next Engine - Deployment Guide
 
-This guide provides instructions on how to deploy the Next Evolution landing page application to a Virtual Private Server (VPS), such as those provided by Hetzner, Vultr, or DigitalOcean.
+This guide provides instructions on how to deploy the Next Engine landing page application to a Virtual Private Server (VPS), such as those provided by Hetzner, Vultr, or DigitalOcean.
 
 We will use Nginx as the web server to serve the static files.
 
@@ -59,7 +59,7 @@ If your project is in a Git repository, this is the easiest method.
     ```
 2.  Clone your repository into a new directory within `/var/www`. Replace `your_repository_url` with your actual repository URL.
     ```bash
-    sudo git clone your_repository_url /var/www/nextevolution
+    sudo git clone your_repository_url /var/www/nextengine
     ```
 
 **Option B: Using SCP (Secure Copy)**
@@ -68,10 +68,10 @@ If your files are on your local machine, you can copy them directly. From your *
 
 ```bash
 # Create a temporary directory on the server
-ssh user@your_server_ip "mkdir -p /tmp/nextevolution_files"
+ssh user@your_server_ip "mkdir -p /tmp/nextengine_files"
 
 # Replace /path/to/your/local/project with the actual path to your files
-scp /path/to/your/local/project/* user@your_server_ip:/tmp/nextevolution_files
+scp /path/to/your/local/project/* user@your_server_ip:/tmp/nextengine_files
 ```
 
 Then, on the **server**, move the files to the final destination:
@@ -81,8 +81,8 @@ Then, on the **server**, move the files to the final destination:
 ssh user@your_server_ip
 
 # Create the directory and move the files
-sudo mkdir -p /var/www/nextevolution
-sudo mv /tmp/nextevolution_files/* /var/www/nextevolution/
+sudo mkdir -p /var/www/nextengine
+sudo mv /tmp/nextengine_files/* /var/www/nextengine/
 ```
 
 ### Step 4: Configure Nginx to Serve the Site
@@ -92,10 +92,10 @@ Now, we need to tell Nginx where to find your website's files.
 1.  Create a new Nginx configuration file for your site using a text editor like `nano`.
 
     ```bash
-    sudo nano /etc/nginx/sites-available/nextevolution
+    sudo nano /etc/nginx/sites-available/nextengine
     ```
 
-2.  Paste the following configuration into the file. If you have a domain, replace `your_server_ip` with your domain name (e.g., `nextevolution.ia.br`).
+2.  Paste the following configuration into the file. If you have a domain, replace `your_server_ip` with your domain name (e.g., `nextengine.com.br`).
 
     ```nginx
     server {
@@ -106,7 +106,7 @@ Now, we need to tell Nginx where to find your website's files.
         server_name your_server_ip;
 
         # Set the root directory to your project files
-        root /var/www/nextevolution;
+        root /var/www/nextengine;
 
         # Set the default file to serve
         index index.html;
@@ -128,7 +128,7 @@ Now, we need to tell Nginx where to find your website's files.
 4.  Enable the configuration by creating a symbolic link to the `sites-enabled` directory.
 
     ```bash
-    sudo ln -s /etc/nginx/sites-available/nextevolution /etc/nginx/sites-enabled/
+    sudo ln -s /etc/nginx/sites-available/nextengine /etc/nginx/sites-enabled/
     ```
 
 5.  Test the Nginx configuration for syntax errors.
@@ -147,7 +147,7 @@ Now, we need to tell Nginx where to find your website's files.
 
 ### Step 5: Final Verification
 
-Open your web browser and navigate to your server's IP address (`http://your_server_ip`) or your domain name. You should now see your Next Evolution landing page.
+Open your web browser and navigate to your server's IP address (`http://your_server_ip`) or your domain name. You should now see your Next Engine landing page.
 
 ### Step 6: (Recommended) Securing with SSL (Let's Encrypt)
 
