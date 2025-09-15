@@ -1,8 +1,8 @@
-# Next Engine - Deployment Guide
+# Next Engine - Deployment Guide (Vite Version)
 
-This guide provides instructions on how to deploy the Next Engine landing page application to a Virtual Private Server (VPS), such as those provided by Hetzner, Vultr, or DigitalOcean.
+This guide provides instructions on how to build and deploy the Next Engine landing page application to a Virtual Private Server (VPS), such as those provided by Hetzner, Vultr, or DigitalOcean.
 
-We will use Nginx as the web server to serve the static files.
+This project uses **Vite** to build and bundle the application assets (TypeScript, CSS). The new deployment process involves building the static files locally on the server and then serving them with Nginx.
 
 ## Prerequisites
 
@@ -24,72 +24,64 @@ Open your terminal and connect to your server using SSH. Replace `user` with you
 ssh user@your_server_ip
 ```
 
-### Step 2: Update and Install Required Software
+### Step 2: Install Required Software
 
-First, update your server's package list and install Nginx, a powerful web server.
+First, update your server's package list. Then, we need to install **Nginx** (web server), **Node.js** and **npm** (to build the project), and **Git** (to get the code).
 
 ```bash
 # Update package lists
-sudo apt update
-sudo apt upgrade -y
+sudo apt update && sudo apt upgrade -y
 
 # Install Nginx
 sudo apt install nginx -y
+
+# Install Git
+sudo apt install git -y
+
+# Install Node.js and npm (this example uses NodeSource for a recent version)
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
 ```
 
-After installation, you can check Nginx's status:
+After installation, verify the versions:
+```bash
+node -v
+npm -v
+nginx -v
+```
+You should also enable Nginx to start on boot: `sudo systemctl enable nginx`.
+
+### Step 3: Clone the Application Repository
+
+Clone your project's repository from Git into a new directory within `/var/www`.
 
 ```bash
-sudo systemctl status nginx
+# Replace your_repository_url with your actual repository URL
+sudo git clone your_repository_url /var/www/nextengine
 ```
 
-If it's not running, you can start it with `sudo systemctl start nginx`. You should also enable it to start on boot: `sudo systemctl enable nginx`.
+### Step 4: Build the Application
 
-### Step 3: Upload Application Files
-
-You need to get your application files (`index.html`, `index.css`, `index.tsx`, `brazil-states-cities.ts`) onto the server.
-
-**Option A: Using Git (Recommended)**
-
-If your project is in a Git repository, this is the easiest method.
-
-1.  Install Git on your server:
-    ```bash
-    sudo apt install git -y
-    ```
-2.  Clone your repository into a new directory within `/var/www`. Replace `your_repository_url` with your actual repository URL.
-    ```bash
-    sudo git clone your_repository_url /var/www/nextengine
-    ```
-
-**Option B: Using SCP (Secure Copy)**
-
-If your files are on your local machine, you can copy them directly. From your **local terminal**, run:
+Now, navigate into the project directory, install the dependencies, and run the build script.
 
 ```bash
-# Create a temporary directory on the server
-ssh user@your_server_ip "mkdir -p /tmp/nextengine_files"
+# Go to the project directory
+cd /var/www/nextengine
 
-# Replace /path/to/your/local/project with the actual path to your files
-scp /path/to/your/local/project/* user@your_server_ip:/tmp/nextengine_files
+# Install project dependencies (Vite, TypeScript, etc.)
+# Use 'sudo' if you encounter permission issues, but it's often better to fix directory permissions.
+sudo npm install
+
+# Run the build process
+sudo npm run build
 ```
+This command will create a new directory named `dist` inside `/var/www/nextengine`. This `dist` folder contains the optimized, static HTML, JavaScript, and CSS files that are ready to be served to users.
 
-Then, on the **server**, move the files to the final destination:
+### Step 5: Configure Nginx to Serve the Built Site
 
-```bash
-# Connect back to the server via SSH
-ssh user@your_server_ip
+We need to tell Nginx to serve the files from the newly created `dist` directory.
 
-# Create the directory and move the files
-sudo mkdir -p /var/www/nextengine
-sudo mv /tmp/nextengine_files/* /var/www/nextengine/
-```
-
-### Step 4: Configure Nginx to Serve the Site
-
-Now, we need to tell Nginx where to find your website's files.
-
-1.  Create a new Nginx configuration file for your site using a text editor like `nano`.
+1.  Create a new Nginx configuration file for your site.
 
     ```bash
     sudo nano /etc/nginx/sites-available/nextengine
@@ -105,27 +97,24 @@ Now, we need to tell Nginx where to find your website's files.
         # Replace with your domain name or leave as the IP address
         server_name your_server_ip;
 
-        # Set the root directory to your project files
-        root /var/www/nextengine;
+        # Set the root directory to your project's 'dist' folder
+        root /var/www/nextengine/dist;
 
         # Set the default file to serve
         index index.html;
 
         location / {
-            try_files $uri $uri/ =404;
-        }
-
-        # Ensure correct MIME types for TypeScript/TSX files served as modules
-        types {
-            application/javascript ts tsx;
+            # This is important for single-page applications, though for this
+            # project, it primarily ensures clean URL handling.
+            try_files $uri $uri/ /index.html;
         }
     }
     ```
-    > **Note:** The `types` block is important. It tells Nginx to serve `.ts` and `.tsx` files with the `application/javascript` MIME type, which is required for browsers to execute them as ES modules.
+    > **Note:** The `root` directive is now pointing to the `dist` subfolder, which contains the production-ready files.
 
-3.  Save the file and exit the editor (in `nano`, press `Ctrl+X`, then `Y`, then `Enter`).
+3.  Save the file and exit the editor (`Ctrl+X`, then `Y`, then `Enter`).
 
-4.  Enable the configuration by creating a symbolic link to the `sites-enabled` directory.
+4.  Enable the configuration by creating a symbolic link.
 
     ```bash
     sudo ln -s /etc/nginx/sites-available/nextengine /etc/nginx/sites-enabled/
@@ -137,19 +126,17 @@ Now, we need to tell Nginx where to find your website's files.
     sudo nginx -t
     ```
 
-    If it shows `syntax is ok` and `test is successful`, you can proceed.
-
-6.  Restart Nginx to apply the changes.
+6.  If the test is successful, restart Nginx to apply the changes.
 
     ```bash
     sudo systemctl restart nginx
     ```
 
-### Step 5: Final Verification
+### Step 6: Final Verification
 
 Open your web browser and navigate to your server's IP address (`http://your_server_ip`) or your domain name. You should now see your Next Engine landing page.
 
-### Step 6: (Recommended) Securing with SSL (Let's Encrypt)
+### Step 7: (Recommended) Securing with SSL (Let's Encrypt)
 
 If you are using a domain name, you must secure your site with an SSL certificate.
 
@@ -166,4 +153,4 @@ Certbot will update your Nginx configuration to handle HTTPS and set up automati
 
 ---
 
-That's it! Your application is now live.
+That's it! Your application is now built and deployed using a modern, efficient workflow. To update the site in the future, you just need to pull the latest changes with `git pull` and run the build command `npm run build` again.

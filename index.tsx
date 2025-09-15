@@ -1,3 +1,4 @@
+import './index.css';
 /**
  * @license
  * Copyright 2025 Google LLC
@@ -16,6 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
             hamburger.classList.toggle('is-active');
             navMenu.classList.toggle('is-active');
             document.body.classList.toggle('no-scroll');
+            
+            // Accessibility: Update ARIA attributes
+            const isActive = navMenu.classList.contains('is-active');
+            hamburger.setAttribute('aria-expanded', String(isActive));
+            hamburger.setAttribute('aria-label', isActive ? 'Fechar menu' : 'Abrir menu');
         };
 
         hamburger.addEventListener('click', toggleNav);
