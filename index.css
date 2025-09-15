@@ -309,7 +309,7 @@ section[id] {
 }
 
 /* Services Section */
-.services, .why-us, .expertise, .cases {
+.services, .why-us, .expertise, .cases, .mission {
   padding: 80px 0;
 }
 
@@ -411,9 +411,48 @@ section[id] {
     flex-shrink: 0;
 }
 
+/* Mission & Vision Section */
+.mission {
+    background-color: var(--white);
+}
+.mission-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+.mission-card {
+    text-align: center;
+}
+.mission-icon {
+    color: var(--primary-blue);
+    background-color: #e0e7ff;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+.mission-icon svg {
+    width: 32px;
+    height: 32px;
+}
+.mission-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--dark-blue);
+}
+.mission-card p {
+    color: #4b5563;
+}
+
+
 /* Expertise Section */
 .expertise {
-    background-color: var(--white);
+    background-color: var(--light-gray);
 }
 
 .expertise-grid {
@@ -1054,7 +1093,7 @@ section[id] {
         padding-top: 0.5rem;
     }
     
-    .expertise-grid {
+    .mission-grid, .expertise-grid {
         grid-template-columns: 1fr;
     }
     
