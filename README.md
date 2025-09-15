@@ -1,156 +1,156 @@
-# Next Engine - Deployment Guide (Vite Version)
+# Next Engine - Guia de Deploy (Versão Vite)
 
-This guide provides instructions on how to build and deploy the Next Engine landing page application to a Virtual Private Server (VPS), such as those provided by Hetzner, Vultr, or DigitalOcean.
+Este guia fornece instruções sobre como compilar e implantar a landing page da Next Engine em um Servidor Virtual Privado (VPS), como os oferecidos pela Hetzner, Vultr ou DigitalOcean.
 
-This project uses **Vite** to build and bundle the application assets (TypeScript, CSS). The new deployment process involves building the static files locally on the server and then serving them with Nginx.
+Este projeto utiliza o **Vite** para compilar e empacotar os recursos da aplicação (TypeScript, CSS). O novo processo de deploy envolve a compilação dos arquivos estáticos localmente no servidor e, em seguida, servi-los com o Nginx.
 
-## Prerequisites
+## Pré-requisitos
 
-Before you begin, ensure you have the following:
+Antes de começar, certifique-se de que você possui:
 
-1.  **A VPS running a Linux distribution** (e.g., Ubuntu 22.04).
-2.  **SSH access** to your VPS with a user that has `sudo` privileges.
-3.  **A domain name** (optional, but recommended for a production setup).
+1.  **Um VPS com uma distribuição Linux** (ex: Ubuntu 22.04).
+2.  **Acesso SSH** ao seu VPS com um usuário que tenha privilégios `sudo`.
+3.  **Um nome de domínio** (opcional, mas recomendado para um ambiente de produção).
 
-## Deployment Steps
+## Passos para o Deploy
 
-Follow these steps to deploy the application on your server.
+Siga estes passos para implantar a aplicação em seu servidor.
 
-### Step 1: Connect to Your VPS
+### Passo 1: Conecte-se ao seu VPS
 
-Open your terminal and connect to your server using SSH. Replace `user` with your username and `your_server_ip` with your VPS's IP address.
+Abra seu terminal e conecte-se ao seu servidor via SSH. Substitua `usuario` pelo seu nome de usuário e `seu_ip_de_servidor` pelo endereço IP do seu VPS.
 
 ```bash
-ssh user@your_server_ip
+ssh usuario@seu_ip_de_servidor
 ```
 
-### Step 2: Install Required Software
+### Passo 2: Instale o Software Necessário
 
-First, update your server's package list. Then, we need to install **Nginx** (web server), **Node.js** and **npm** (to build the project), and **Git** (to get the code).
+Primeiro, atualize a lista de pacotes do seu servidor. Em seguida, precisamos instalar o **Nginx** (servidor web), **Node.js** e **npm** (para compilar o projeto) e o **Git** (para obter o código).
 
 ```bash
-# Update package lists
+# Atualiza as listas de pacotes
 sudo apt update && sudo apt upgrade -y
 
-# Install Nginx
+# Instala o Nginx
 sudo apt install nginx -y
 
-# Install Git
+# Instala o Git
 sudo apt install git -y
 
-# Install Node.js and npm (this example uses NodeSource for a recent version)
+# Instala o Node.js e o npm (este exemplo usa o NodeSource para uma versão recente)
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 
-After installation, verify the versions:
+Após a instalação, verifique as versões:
 ```bash
 node -v
 npm -v
 nginx -v
 ```
-You should also enable Nginx to start on boot: `sudo systemctl enable nginx`.
+Você também deve habilitar o Nginx para iniciar com o sistema: `sudo systemctl enable nginx`.
 
-### Step 3: Clone the Application Repository
+### Passo 3: Clone o Repositório da Aplicação
 
-Clone your project's repository from Git into a new directory within `/var/www`.
+Clone o repositório do seu projeto do Git para um novo diretório dentro de `/var/www`.
 
 ```bash
-# Replace your_repository_url with your actual repository URL
-sudo git clone your_repository_url /var/www/nextengine
+# Substitua sua_url_do_repositorio pela URL real do seu repositório
+sudo git clone sua_url_do_repositorio /var/www/nextengine
 ```
 
-### Step 4: Build the Application
+### Passo 4: Compile a Aplicação
 
-Now, navigate into the project directory, install the dependencies, and run the build script.
+Agora, navegue para o diretório do projeto, instale as dependências e execute o script de build.
 
 ```bash
-# Go to the project directory
+# Vá para o diretório do projeto
 cd /var/www/nextengine
 
-# Install project dependencies (Vite, TypeScript, etc.)
-# Use 'sudo' if you encounter permission issues, but it's often better to fix directory permissions.
+# Instale as dependências do projeto (Vite, TypeScript, etc.)
+# Use 'sudo' se encontrar problemas de permissão, mas geralmente é melhor corrigir as permissões do diretório.
 sudo npm install
 
-# Run the build process
+# Execute o processo de build
 sudo npm run build
 ```
-This command will create a new directory named `dist` inside `/var/www/nextengine`. This `dist` folder contains the optimized, static HTML, JavaScript, and CSS files that are ready to be served to users.
+Este comando criará um novo diretório chamado `dist` dentro de `/var/www/nextengine`. Esta pasta `dist` contém os arquivos estáticos otimizados (HTML, JavaScript e CSS) que estão prontos para serem servidos aos usuários.
 
-### Step 5: Configure Nginx to Serve the Built Site
+### Passo 5: Configure o Nginx para Servir o Site Compilado
 
-We need to tell Nginx to serve the files from the newly created `dist` directory.
+Precisamos informar ao Nginx para servir os arquivos do diretório `dist` recém-criado.
 
-1.  Create a new Nginx configuration file for your site.
+1.  Crie um novo arquivo de configuração do Nginx para o seu site.
 
     ```bash
     sudo nano /etc/nginx/sites-available/nextengine
     ```
 
-2.  Paste the following configuration into the file. If you have a domain, replace `your_server_ip` with your domain name (e.g., `nextengine.com.br`).
+2.  Cole a seguinte configuração no arquivo. Se você tiver um domínio, substitua `seu_ip_de_servidor` pelo seu nome de domínio (ex: `nextengine.com.br`).
 
     ```nginx
     server {
         listen 80;
         listen [::]:80;
 
-        # Replace with your domain name or leave as the IP address
-        server_name your_server_ip;
+        # Substitua pelo seu nome de domínio ou deixe como o endereço IP
+        server_name seu_ip_de_servidor;
 
-        # Set the root directory to your project's 'dist' folder
+        # Defina o diretório raiz para a pasta 'dist' do seu projeto
         root /var/www/nextengine/dist;
 
-        # Set the default file to serve
+        # Defina o arquivo padrão a ser servido
         index index.html;
 
         location / {
-            # This is important for single-page applications, though for this
-            # project, it primarily ensures clean URL handling.
+            # Isso é importante para aplicações de página única (SPAs),
+            # embora para este projeto, garanta principalmente um tratamento limpo de URLs.
             try_files $uri $uri/ /index.html;
         }
     }
     ```
-    > **Note:** The `root` directive is now pointing to the `dist` subfolder, which contains the production-ready files.
+    > **Nota:** A diretiva `root` agora aponta para a subpasta `dist`, que contém os arquivos prontos para produção.
 
-3.  Save the file and exit the editor (`Ctrl+X`, then `Y`, then `Enter`).
+3.  Salve o arquivo e saia do editor (`Ctrl+X`, depois `S` e `Enter`).
 
-4.  Enable the configuration by creating a symbolic link.
+4.  Habilite a configuração criando um link simbólico.
 
     ```bash
     sudo ln -s /etc/nginx/sites-available/nextengine /etc/nginx/sites-enabled/
     ```
 
-5.  Test the Nginx configuration for syntax errors.
+5.  Teste a configuração do Nginx para verificar erros de sintaxe.
 
     ```bash
     sudo nginx -t
     ```
 
-6.  If the test is successful, restart Nginx to apply the changes.
+6.  Se o teste for bem-sucedido, reinicie o Nginx para aplicar as alterações.
 
     ```bash
     sudo systemctl restart nginx
     ```
 
-### Step 6: Final Verification
+### Passo 6: Verificação Final
 
-Open your web browser and navigate to your server's IP address (`http://your_server_ip`) or your domain name. You should now see your Next Engine landing page.
+Abra seu navegador e acesse o endereço IP do seu servidor (`http://seu_ip_de_servidor`) ou seu nome de domínio. Você deve ver a sua landing page da Next Engine.
 
-### Step 7: (Recommended) Securing with SSL (Let's Encrypt)
+### Passo 7: (Recomendado) Protegendo com SSL (Let's Encrypt)
 
-If you are using a domain name, you must secure your site with an SSL certificate.
+Se você estiver usando um nome de domínio, é crucial proteger seu site com um certificado SSL.
 
-1.  Install Certbot for Nginx:
+1.  Instale o Certbot para Nginx:
     ```bash
     sudo apt install certbot python3-certbot-nginx -y
     ```
-2.  Run Certbot to automatically obtain and install a certificate. Replace `your_domain.com` with your actual domain.
+2.  Execute o Certbot para obter e instalar um certificado automaticamente. Substitua `seu_dominio.com` pelo seu domínio real.
     ```bash
-    sudo certbot --nginx -d your_domain.com
+    sudo certbot --nginx -d seu_dominio.com
     ```
 
-Certbot will update your Nginx configuration to handle HTTPS and set up automatic certificate renewal. Your site will now be accessible via `https://your_domain.com`.
+O Certbot atualizará sua configuração do Nginx para lidar com HTTPS e configurará a renovação automática do certificado. Seu site agora estará acessível via `https://seu_dominio.com`.
 
 ---
 
-That's it! Your application is now built and deployed using a modern, efficient workflow. To update the site in the future, you just need to pull the latest changes with `git pull` and run the build command `npm run build` again.
+É isso! Sua aplicação agora está compilada e implantada usando um fluxo de trabalho moderno e eficiente. Para atualizar o site no futuro, basta puxar as últimas alterações com `git pull` e executar o comando de build `npm run build` novamente.
