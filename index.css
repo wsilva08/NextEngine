@@ -308,12 +308,68 @@ section[id] {
   margin-bottom: 2rem;
 }
 
+/* Value Prop Section */
+.value-prop {
+  padding: 80px 0;
+  background-color: var(--light-gray);
+}
+
+.value-prop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.value-prop-card {
+  background-color: var(--white);
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.value-prop-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 191, 166, 0.1);
+  border-color: var(--primary-green);
+}
+
+.value-prop-icon {
+  color: var(--primary-green);
+  background-color: #d1fae5;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.value-prop-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.value-prop-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.value-prop-card p {
+  flex-grow: 1;
+}
+
 /* Services Section */
-.services, .why-us, .expertise, .cases, .mission {
+.services, .why-us, .cases, .mission {
   padding: 80px 0;
 }
 
-.services, .expertise, .cases {
+.services, .cases {
     background-color: #f9fafb;
 }
 
@@ -419,6 +475,61 @@ section[id] {
     flex-shrink: 0;
 }
 
+/* Expertise items inside Why Us */
+.why-us .expertise-grid {
+    margin-top: 3.5rem;
+    margin-bottom: 2.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    text-align: center;
+    display: grid;
+}
+
+.why-us .expertise-item {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: none;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+}
+
+.why-us .expertise-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary-green);
+    transform: translateY(-5px);
+}
+
+.why-us .expertise-item h3 {
+    color: var(--white);
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.why-us .expertise-item p {
+    color: var(--text-light);
+    flex-grow: 1;
+}
+
+.why-us .expertise-item .expertise-icon {
+    color: var(--primary-green);
+    background-color: rgba(0, 191, 166, 0.1);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.why-us .expertise-item .expertise-icon svg {
+    width: 32px;
+    height: 32px;
+}
+
+
 /* Mission & Vision Section */
 .mission {
     background-color: var(--white);
@@ -472,7 +583,7 @@ section[id] {
 }
 
 
-/* Expertise Section */
+/* Expertise Section (Legacy - no longer used as a standalone section) */
 .expertise {
     background-color: var(--light-gray);
 }
@@ -1149,7 +1260,7 @@ section[id] {
         padding-top: 0.5rem;
     }
     
-    .mission-grid, .expertise-grid {
+    .mission-grid, .expertise-grid, .why-us .expertise-grid, .value-prop-grid {
         grid-template-columns: 1fr;
     }
     
