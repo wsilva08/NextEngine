@@ -144,24 +144,15 @@ section[id] {
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: 700;
   text-decoration: none;
   color: var(--white);
   display: flex;
   align-items: center;
-  gap: 4px;
 }
 .logo-icon {
     height: 32px;
     width: auto;
     vertical-align: middle;
-}
-.logo-text {
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    color: inherit;
 }
 
 .nav-menu {
@@ -671,13 +662,6 @@ section[id] {
 .footer-about .logo {
     margin-bottom: 1rem;
     display: inline-flex;
-}
-
-.footer .logo .logo-text {
-     background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    color: inherit;
 }
 
 .footer-socials {
