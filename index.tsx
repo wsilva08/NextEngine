@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             setTimeout(() => {
-                const phoneNumber = '5519974036518';
+                const phoneNumber = '551931992624';
                 const message = `Olá! Gostaria de solicitar uma consultoria.\n\n*Nome:* ${name}\n*E-mail:* ${email}\n*Telefone:* ${phone}\n*Cidade:* ${city} - ${state}`;
                 const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
