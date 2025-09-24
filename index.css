@@ -518,6 +518,10 @@ section[id] {
     flex-grow: 1;
 }
 
+#mission > .mission {
+    padding-bottom: 0;
+}
+
 
 /* Expertise Section (Legacy - no longer used as a standalone section) */
 .expertise {
