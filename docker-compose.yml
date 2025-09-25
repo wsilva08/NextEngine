@@ -3,10 +3,10 @@ version: '3.8'
 services:
   nextengine-app:
     # A imagem deve ser construída localmente antes do deploy com o nome "nextengine:latest"
-    image: nextengine:latest
+    image: nextengine:1.0
     networks:
       # Conecta o serviço à rede externa do Traefik
-      - public_network # IMPORTANTE: Substitua 'web' pelo nome da sua rede Traefik
+      - network_public # IMPORTANTE: Substitua 'web' pelo nome da sua rede Traefik
     
     # A chave 'deploy' é específica para o modo Swarm
     deploy:
