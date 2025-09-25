@@ -3,7 +3,7 @@ version: '3.8'
 services:
   nextengine-app:
     # A imagem deve ser construída localmente com 'docker build -t nextengine:1.0 .'
-    image: nextengine:1.0
+    image: nextengine:1.1
     networks:
       # Conecta o serviço à rede externa do Traefik
       - network_public # IMPORTANTE: Verifique se este é o nome correto da sua rede Traefik
