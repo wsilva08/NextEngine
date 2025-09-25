@@ -39,10 +39,10 @@ Antes de começar, certifique-se de que seu ambiente na VPS (Hetzner, etc.) aten
 
 1.  **Docker e Docker Swarm inicializado**: O Docker deve estar instalado e o modo Swarm ativado (`docker swarm init`).
 2.  **Traefik rodando como um serviço Swarm**: Você já deve ter o Traefik configurado e implantado no seu cluster Swarm.
-3.  **Uma rede Docker externa e "attachable"**: O Traefik precisa de uma rede compartilhada para se comunicar com os serviços que ele expõe. Geralmente, essa rede é chamada de `web` ou `traefik-public`.
+3.  **Uma rede Docker externa e "attachable"**: O Traefik precisa de uma rede compartilhada para se comunicar com os serviços que ele expõe. Geralmente, essa rede é chamada de `web` ou `traefik-public`. O nome `network_public` é usado nos exemplos abaixo.
     ```bash
     # Exemplo de como criar a rede, caso ainda não exista
-    docker network create --driver=overlay --attachable web
+    docker network create --driver=overlay --attachable network_public
     ```
 4.  **Um nome de domínio** apontando para o endereço IP do seu nó manager do Swarm.
 
@@ -138,24 +138,24 @@ O `Dockerfile` acima precisa de um arquivo de configuração para o Nginx.
 
 O arquivo `docker-compose.yml` (já incluído neste repositório) define como o Docker Swarm deve executar nosso serviço.
 
-**Antes de continuar, edite o arquivo `docker-compose.yml` e altere os seguintes valores:**
+**Antes de continuar, edite o arquivo `docker-compose.yml` e altere os seguintes valores se necessário:**
 
--   `seu-dominio.com.br`: Substitua pelo seu domínio real.
--   `myresolver`: Substitua pelo nome do seu "certresolver" configurado no Traefik (ex: `letsencrypt`).
--   `web`: Substitua pelo nome da sua rede Docker externa, se for diferente.
+-   `nextengine.com.br`: Substitua pelo seu domínio real.
+-   `letsencrypt`: Substitua pelo nome do seu "certresolver" configurado no Traefik.
+-   `network_public`: Substitua pelo nome da sua rede Docker externa, se for diferente.
 
 #### Passo 5: Construa a Imagem Docker
 
-Diferente do `docker-compose up`, o `docker stack deploy` **não** constrói a imagem automaticamente. Precisamos construí-la primeiro.
+Diferente do `docker-compose up`, o `docker stack deploy` **não** constrói a imagem automaticamente. Precisamos construí-la primeiro. É uma boa prática usar versões específicas em vez de `:latest` para garantir que a versão correta seja implantada.
 
 ```bash
 # O -t define o nome e a tag da imagem (nome:tag)
-docker build -t nextengine:latest .
+docker build -t nextengine:1.0 .
 ```
 
 #### Passo 6: Implante o "Stack"
 
-Agora que a imagem `nextengine:latest` existe localmente, podemos implantar o stack. O Swarm irá utilizá-la para criar o serviço.
+Agora que a imagem `nextengine:1.0` existe localmente (e o `docker-compose.yml` aponta para ela), podemos implantar o stack.
 
 ```bash
 docker stack deploy -c docker-compose.yml nextengine
@@ -177,18 +177,28 @@ O Swarm agora irá garantir que o serviço esteja sempre rodando. O Traefik dete
     # O nome do serviço geralmente é <stack_name>_<service_name>
     docker service logs -f nextengine_nextengine-app
     ```
--   **Atualizar a aplicação:** Para implantar uma nova versão, o fluxo é o mesmo: puxe as alterações, reconstrua a imagem e faça o deploy novamente. O Docker Swarm cuidará da atualização de forma gradual (rolling update) e sem tempo de inatividade.
-    ```bash
-    # Navegue até a pasta do projeto
-    cd /caminho/para/nextengine
+-   **Atualizar a aplicação:** Para implantar uma nova versão do código, o fluxo é simples e garante que o site não saia do ar (rolling update).
     
-    # Puxe as novas alterações
+    1.  **Baixe as novas alterações** do repositório.
+    2.  **Reconstrua a imagem Docker** com uma nova tag de versão.
+    3.  **Atualize o `docker-compose.yml`** para usar a nova tag da imagem.
+    4.  **Execute o deploy novamente**; o Swarm cuidará da atualização.
+
+    ```bash
+    # 1. Navegue até a pasta do projeto e puxe as alterações
+    cd /caminho/para/nextengine
     git pull
     
-    # Reconstrua a imagem com as alterações
-    docker build -t nextengine:latest .
+    # 2. Reconstrua a imagem com uma nova tag de versão (boa prática)
+    # Supondo que a versão anterior era 1.0, a nova pode ser 1.1
+    docker build -t nextengine:1.1 .
     
-    # Execute o deploy novamente para que o Swarm atualize o serviço
+    # 3. ATENÇÃO: Atualize a tag da imagem no seu arquivo docker-compose.yml
+    # Troque 'image: nextengine:1.0' para 'image: nextengine:1.1'
+    # Você pode fazer isso manualmente com um editor como 'nano' ou 'vim'.
+    # Ex: nano docker-compose.yml
+    
+    # 4. Execute o deploy novamente para que o Swarm atualize o serviço
     docker stack deploy -c docker-compose.yml nextengine
     ```
 -   **Remover o stack:**
@@ -196,4 +206,36 @@ O Swarm agora irá garantir que o serviço esteja sempre rodando. O Traefik dete
     docker stack rm nextengine
     ```
 
+### Solução de Problemas
+
+-   **Erro de Certificado Inválido (`NET::ERR_CERT_AUTHORITY_INVALID`)**
+    
+    Este erro significa que o Traefik não conseguiu obter um certificado SSL da Let's Encrypt para seu domínio e está usando um certificado autoassinado. A causa mais comum é um problema de DNS.
+    
+    1.  **Verifique os apontamentos de DNS:** Conecte-se à sua VPS e use o comando `dig` para confirmar que seu domínio e o subdomínio `www` apontam para o IP correto do servidor.
+        ```bash
+        # Verifique o domínio principal
+        dig seu-dominio.com.br +short
+
+        # Verifique também o www
+        dig www.seu-dominio.com.br +short
+        ```
+        Ambos os comandos devem retornar o endereço IP público da sua VPS. Se não retornarem, corrija os registros `A` no painel do seu provedor de domínio.
+    2.  **Verifique os logs do Traefik:** Os logs do Traefik fornecerão a causa exata da falha.
+        ```bash
+        docker service logs -f <nome_do_serviço_traefik>
+        ```
+
+-   **Erro ao executar `git pull`**
+    
+    Se você receber o erro `error: The following untracked working tree files would be overwritten by merge...`, significa que você criou ou modificou um arquivo no servidor que o Git agora está tentando baixar.
+    
+    Para resolver de forma segura, renomeie seu arquivo local e tente novamente:
+    ```bash
+    # Exemplo: se o arquivo conflitante for docker-compose.yml
+    mv docker-compose.yml docker-compose.yml.old
+    
+    # Agora, puxe as alterações novamente
+    git pull
+    ```
 É isso! Sua aplicação agora está implantada de forma robusta e moderna.

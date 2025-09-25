@@ -2,15 +2,14 @@ version: '3.8'
 
 services:
   nextengine-app:
-    # A imagem deve ser construída localmente antes do deploy com o nome "nextengine:latest"
+    # A imagem deve ser construída localmente com 'docker build -t nextengine:1.0 .'
     image: nextengine:1.0
     networks:
       # Conecta o serviço à rede externa do Traefik
-      - network_public # IMPORTANTE: Substitua 'web' pelo nome da sua rede Traefik
+      - network_public # IMPORTANTE: Verifique se este é o nome correto da sua rede Traefik
     
-    # A chave 'deploy' é específica para o modo Swarm
     deploy:
-      replicas: 1 # Define quantas instâncias do container devem rodar
+      replicas: 1
       update_config:
         parallelism: 1
         delay: 10s
@@ -18,26 +17,27 @@ services:
         condition: on-failure
       labels:
         # --- Configuração do Traefik para Swarm ---
-        # Habilita o Traefik para este serviço
         - "traefik.enable=true"
-        
-        # Especifica a rede Docker que o Traefik deve usar para se conectar a este serviço
-        - "traefik.docker.network=network_public" # IMPORTANTE: Substitua 'web' pelo nome da sua rede Traefik
+        - "traefik.docker.network=network_public" # IMPORTANTE: Use o nome da sua rede Traefik aqui
 
-        # Define a regra de roteamento baseada no domínio
-        - "traefik.http.routers.nextengine-app.rule=Host(`nextengine.com.br`)" # IMPORTANTE: Substitua pelo seu domínio
-        
-        # Define o ponto de entrada (geralmente 'websecure' para HTTPS)
+        # --- Roteador Principal (HTTPS) ---
+        # A regra agora captura tanto o domínio com 'www' quanto sem 'www'
+        - "traefik.http.routers.nextengine-app.rule=Host(`nextengine.com.br`) || Host(`www.nextengine.com.br`)"
         - "traefik.http.routers.nextengine-app.entrypoints=websecure"
-        
-        # Habilita o TLS (SSL) e especifica o resolvedor de certificados (ex: 'letsencrypt')
         - "traefik.http.routers.nextengine-app.tls=true"
-        - "traefik.http.routers.nextengine-app.tls.certresolver=letsencrypt" # IMPORTANTE: Substitua pelo nome do seu resolver
+        - "traefik.http.routers.nextengine-app.tls.certresolver=letsencrypt" # IMPORTANTE: Use o nome do seu resolver
         
-        # Informa ao Traefik qual porta o container está usando internamente
+        # --- Middleware de Redirecionamento (www -> não-www) ---
+        # Aplica o middleware de redirecionamento ao roteador principal
+        - "traefik.http.routers.nextengine-app.middlewares=redirect-www"
+        # Define o middleware que redireciona www para o domínio raiz
+        - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www\\.nextengine\\.com\\.br/(.*)"
+        - "traefik.http.middlewares.redirect-www.redirectregex.replacement=https://nextengine.com.br/$${1}"
+        
+        # --- Configuração do Serviço ---
         - "traefik.http.services.nextengine-app.loadbalancer.server.port=80"
 
 # Declara a rede como externa, pois ela já foi criada pelo Traefik
 networks:
-  network_public: # IMPORTANTE: Substitua 'web' pelo nome da sua rede Traefik
+  network_public: # IMPORTANTE: Verifique se este é o nome correto da sua rede Traefik
     external: true
