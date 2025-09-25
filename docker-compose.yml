@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   nextengine-app:
-    # A imagem deve ser construída localmente com 'docker build -t nextengine:1.0 .'
-    image: nextengine:1.1
+    # A imagem deve ser construída localmente. Ex: docker build -t nextengine:1.1 .
+    image: nextengine:1.1 # Mantenha a versão da sua imagem aqui
     networks:
       # Conecta o serviço à rede externa do Traefik
       - network_public # IMPORTANTE: Verifique se este é o nome correto da sua rede Traefik
@@ -16,23 +16,15 @@ services:
       restart_policy:
         condition: on-failure
       labels:
-        # --- Configuração do Traefik para Swarm ---
+        # --- Configuração Simplificada para Depuração de SSL ---
         - "traefik.enable=true"
-        - "traefik.docker.network=network_public" # IMPORTANTE: Use o nome da sua rede Traefik aqui
+        - "traefik.docker.network=network_public" # IMPORTANTE: Use o nome da sua rede Traefik
 
-        # --- Roteador Principal (HTTPS) ---
-        # A regra agora captura tanto o domínio com 'www' quanto sem 'www'
-        - "traefik.http.routers.nextengine-app.rule=Host(`nextengine.com.br`) || Host(`www.nextengine.com.br`)"
+        # --- Roteador HTTPS (Apenas para o domínio principal) ---
+        - "traefik.http.routers.nextengine-app.rule=Host(`nextengine.com.br`)"
         - "traefik.http.routers.nextengine-app.entrypoints=websecure"
         - "traefik.http.routers.nextengine-app.tls=true"
         - "traefik.http.routers.nextengine-app.tls.certresolver=letsencrypt" # IMPORTANTE: Use o nome do seu resolver
-        
-        # --- Middleware de Redirecionamento (www -> não-www) ---
-        # Aplica o middleware de redirecionamento ao roteador principal
-        - "traefik.http.routers.nextengine-app.middlewares=redirect-www"
-        # Define o middleware que redireciona www para o domínio raiz
-        - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www\\.nextengine\\.com\\.br/(.*)"
-        - "traefik.http.middlewares.redirect-www.redirectregex.replacement=https://nextengine.com.br/$${1}"
         
         # --- Configuração do Serviço ---
         - "traefik.http.services.nextengine-app.loadbalancer.server.port=80"

@@ -208,34 +208,51 @@ O Swarm agora irá garantir que o serviço esteja sempre rodando. O Traefik dete
 
 ### Solução de Problemas
 
--   **Erro de Certificado Inválido (`NET::ERR_CERT_AUTHORITY_INVALID`)**
-    
-    Este erro significa que o Traefik não conseguiu obter um certificado SSL da Let's Encrypt para seu domínio e está usando um certificado autoassinado. A causa mais comum é um problema de DNS.
-    
-    1.  **Verifique os apontamentos de DNS:** Conecte-se à sua VPS e use o comando `dig` para confirmar que seu domínio e o subdomínio `www` apontam para o IP correto do servidor.
-        ```bash
-        # Verifique o domínio principal
-        dig seu-dominio.com.br +short
+#### Erro de Certificado Inválido (`NET::ERR_CERT_AUTHORITY_INVALID`)
 
-        # Verifique também o www
-        dig www.seu-dominio.com.br +short
-        ```
-        Ambos os comandos devem retornar o endereço IP público da sua VPS. Se não retornarem, corrija os registros `A` no painel do seu provedor de domínio.
-    2.  **Verifique os logs do Traefik:** Os logs do Traefik fornecerão a causa exata da falha.
-        ```bash
-        docker service logs -f <nome_do_serviço_traefik>
-        ```
+Este erro significa que o Traefik não conseguiu obter um certificado SSL da Let's Encrypt para seu domínio e está usando um certificado autoassinado. Como outras aplicações na mesma VPS funcionam, o problema é específico do seu domínio ou da configuração deste serviço.
 
--   **Erro ao executar `git pull`**
-    
-    Se você receber o erro `error: The following untracked working tree files would be overwritten by merge...`, significa que você criou ou modificou um arquivo no servidor que o Git agora está tentando baixar.
-    
-    Para resolver de forma segura, renomeie seu arquivo local e tente novamente:
+**Siga este checklist de depuração:**
+
+1.  **Simplifique para Isolar:** Use a versão simplificada do `docker-compose.yml` fornecida no repositório. Ela foca em obter o certificado apenas para o domínio principal (`nextengine.com.br`), removendo a complexidade do `www` e de redirecionamentos.
+
+2.  **Verifique o Apontamento de DNS:** Esta é a causa mais comum. Conecte-se à sua VPS e confirme que o domínio aponta para o IP correto.
     ```bash
-    # Exemplo: se o arquivo conflitante for docker-compose.yml
-    mv docker-compose.yml docker-compose.yml.old
-    
-    # Agora, puxe as alterações novamente
-    git pull
+    dig nextengine.com.br +short
     ```
+    O resultado **DEVE** ser o endereço IP público da sua VPS. Se não for, corrija os registros `A` no painel do seu provedor de domínio.
+
+3.  **Verifique o Nome da Rede Docker:** Confirme no `docker-compose.yml` que o nome da rede (`network_public`) é **exatamente o mesmo** usado pelos seus outros serviços que funcionam corretamente.
+
+4.  **Reimplante o Stack (do zero):** É crucial forçar o Traefik a tentar novamente.
+    ```bash
+    # Remova completamente o stack
+    docker stack rm nextengine
+    
+    # Espere alguns segundos e então implante novamente
+    docker stack deploy -c docker-compose.yml nextengine
+    ```
+
+5.  **Analise os Logs do Traefik (Passo Crítico):** Imediatamente após o passo 4, verifique os logs do seu serviço Traefik. Eles mostrarão a causa exata da falha.
+    ```bash
+    # Descubra o nome do seu serviço Traefik
+    docker service ls
+    
+    # Exiba os logs (substitua pelo nome correto)
+    docker service logs -f <nome_do_serviço_traefik>
+    ```
+    Procure por mensagens com `nextengine.com.br`. Um erro como `Timeout during challenge` indica um problema de firewall ou DNS, enquanto outras mensagens podem apontar para configurações incorretas.
+
+#### Erro ao executar `git pull`
+
+Se você receber o erro `error: The following untracked working tree files would be overwritten by merge...`, significa que você criou ou modificou um arquivo no servidor que o Git agora está tentando baixar.
+
+Para resolver de forma segura, renomeie seu arquivo local e tente novamente:
+```bash
+# Exemplo: se o arquivo conflitante for docker-compose.yml
+mv docker-compose.yml docker-compose.yml.old
+
+# Agora, puxe as alterações novamente
+git pull
+```
 É isso! Sua aplicação agora está implantada de forma robusta e moderna.
